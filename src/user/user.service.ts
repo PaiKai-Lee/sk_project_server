@@ -1,5 +1,5 @@
-import { ConflictException, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma.service';
+import { ConflictException, Injectable, NotAcceptableException } from '@nestjs/common';
+import { PrismaService } from 'src/lib/prisma.service';
 import { CreateUserDto, UpdateUserDto } from './dto';
 import { user as User, Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
@@ -13,7 +13,8 @@ export class UserService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    const { name, email, role, department } = createUserDto;
+    const { name, email, role, department, createdBy, updatedBy } =
+      createUserDto;
 
     const foundUser: User = await this.prisma.user.findUnique({
       where: {
@@ -35,6 +36,8 @@ export class UserService {
         email,
         role,
         department,
+        createdBy,
+        updatedBy,
       },
     });
 
@@ -55,6 +58,9 @@ export class UserService {
       take,
       select,
       orderBy,
+      where: {
+        isDelete: false,
+      },
     });
   }
 
@@ -62,8 +68,28 @@ export class UserService {
     return `This action returns a #${id} user`;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    // const {name,password,email,department,role}
+    // this.prisma.user.update({
+    //   where:{
+    //     id
+    //   },
+    //   data:updateUserDto
+    // })
     return `This action updates a #${id} user`;
+  }
+
+  async changePassword({
+    userId,
+    password,
+    confirmPassword
+  }: {
+    userId: number;
+    password: string;
+    confirmPassword: string;
+  }) {
+    if(password !== confirmPassword) throw new NotAcceptableException()
+    return 'update user password';
   }
 
   remove(id: number) {

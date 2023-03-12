@@ -4,7 +4,9 @@ import {
   IsEnum,
   IsOptional,
   Matches,
-  IsNumberString
+  IsNumberString,
+  IsAlphanumeric,
+  Length,
 } from 'class-validator';
 
 import { PartialType } from '@nestjs/mapped-types';
@@ -26,13 +28,13 @@ export class CreateUserDto {
   @IsOptional()
   @IsString()
   department: string;
+
+  createdBy?: string;
+
+  updatedBy?: string;
 }
 
-export class UpdateUserDto extends PartialType(CreateUserDto) {
-  @IsOptional()
-  @Matches(/^[A-za-z0-9]{6,12}$/, { message: 'password 格式錯誤' })
-  password?: string;
-}
+export class UpdateUserDto extends PartialType(CreateUserDto) {}
 
 export class FindAllDto {
   @IsOptional()
@@ -50,4 +52,14 @@ export class FindAllDto {
   @IsOptional()
   @IsString()
   select: string;
+}
+
+export class ChangePwdDto {
+  @IsNotEmpty()
+  @IsAlphanumeric()
+  @Length(6, 12)
+  password: string;
+
+  @IsNotEmpty()
+  confirmPassword: string;
 }

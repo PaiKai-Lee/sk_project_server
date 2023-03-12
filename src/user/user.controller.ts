@@ -1,5 +1,6 @@
 import {
   Controller,
+  Req,
   Get,
   Post,
   Body,
@@ -7,17 +8,21 @@ import {
   Param,
   Delete,
   Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto, UpdateUserDto, FindAllDto } from './dto/';
+import { CreateUserDto, UpdateUserDto, FindAllDto, ChangePwdDto } from './dto/';
 import { Prisma } from '@prisma/client';
+import { Request } from 'express';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
+  create(@Req() req: Request, @Body() createUserDto: CreateUserDto) {
+    createUserDto.createdBy = req.user.name || 'system';
+    createUserDto.updatedBy = req.user.name || 'system';
     return this.userService.create(createUserDto);
   }
 
@@ -54,13 +59,28 @@ export class UserController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    console.log(typeof id);
+    return this.userService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  @Patch('info/:id')
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.userService.update(id, updateUserDto);
+  }
+
+  @Patch('/password')
+  changePassword(@Req() req: Request, @Body() body: ChangePwdDto) {
+    const userId = req.user.id;
+    const { password, confirmPassword } = body;
+    return this.userService.changePassword({
+      userId,
+      password,
+      confirmPassword,
+    });
   }
 
   @Delete(':id')
