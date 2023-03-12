@@ -23,7 +23,7 @@ export class UserService {
 
     if (foundUser) throw new ConflictException();
 
-    const defaultPws = this.configService.get('DEFALUT_PWD');
+    const defaultPws = this.configService.get('DEFAULT_PWD');
     const saltRound = this.configService.get('SALT_ROUND');
     // hash password
     const hashPassword = await bcrypt.hash(defaultPws, saltRound);
