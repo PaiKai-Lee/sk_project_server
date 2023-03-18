@@ -5,7 +5,7 @@ import { AuthService } from './auth.service';
 import { OrderModule } from './order/order.module';
 import { TransactionModule } from './transaction/transaction.module';
 import { UserModule } from './user/user.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthMiddleware } from './lib/auth.middleware';
 
 @Module({
@@ -16,13 +16,10 @@ import { AuthMiddleware } from './lib/auth.middleware';
     ConfigModule.forRoot({ isGlobal: true }),
   ],
   controllers: [AppController],
-  providers: [AppService, AuthService],
+  providers: [AppService, AuthService, ConfigService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(AuthMiddleware)
-      .exclude('/login')
-      .forRoutes('*');
+    consumer.apply(AuthMiddleware).exclude('/login').forRoutes('*');
   }
 }

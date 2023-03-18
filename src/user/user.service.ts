@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotAcceptableException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotAcceptableException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/lib/prisma.service';
 import { CreateUserDto, UpdateUserDto } from './dto';
 import { user as User, Prisma } from '@prisma/client';
@@ -27,7 +31,8 @@ export class UserService {
     const defaultPws = this.configService.get('DEFAULT_PWD');
     const saltRound = this.configService.get('SALT_ROUND');
     // hash password
-    const hashPassword = await bcrypt.hash(defaultPws, saltRound);
+    const salt = await bcrypt.genSalt(+saltRound)
+    const hashPassword = await bcrypt.hash(defaultPws, salt);
 
     await this.prisma.user.create({
       data: {
@@ -41,9 +46,8 @@ export class UserService {
       },
     });
 
-    return {
-      message: '成功建立使用者',
-    };
+    return '成功建立使用者'
+  
   }
 
   async findAll(params: {
@@ -64,8 +68,12 @@ export class UserService {
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number) {
+    return this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
@@ -82,13 +90,13 @@ export class UserService {
   async changePassword({
     userId,
     password,
-    confirmPassword
+    confirmPassword,
   }: {
     userId: number;
     password: string;
     confirmPassword: string;
   }) {
-    if(password !== confirmPassword) throw new NotAcceptableException()
+    if (password !== confirmPassword) throw new NotAcceptableException();
     return 'update user password';
   }
 

@@ -1,23 +1,33 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import {
+  Injectable,
+  NestMiddleware,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
+import { PrismaService } from './prisma.service';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
-  use(req: Request, res: Response, next: NextFunction) {
-    // TODO Auth middleware
-    // get jwt token from request header
+  constructor(private readonly prisma: PrismaService) {}
 
-    // parse header
+  async use(req: Request, res: Response, next: NextFunction) {
+    // if (!req.session?.user) throw new UnauthorizedException();
 
-    // use id get user data
+    // const foundUser = await this.prisma.user.findUnique({
+    //   where: { id: req.session.user.id },
+    // });
 
-    // assign info to req.user
+    // const { id, name, email, department, role, points } = foundUser;
 
-    req.user = {
-      id: 1,
-      name: 'test',
-      role: 'SuperAdmin',
-    };
+    // req.user = {
+    //   id,
+    //   name,
+    //   email,
+    //   department,
+    //   role,
+    //   points,
+    // };
+
     next();
   }
 }

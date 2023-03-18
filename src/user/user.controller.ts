@@ -19,13 +19,15 @@ import { Request } from 'express';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  // 創建使用者
   @Post()
   create(@Req() req: Request, @Body() createUserDto: CreateUserDto) {
-    createUserDto.createdBy = req.user.name || 'system';
-    createUserDto.updatedBy = req.user.name || 'system';
+    createUserDto.createdBy = req.user?.name || 'system';
+    createUserDto.updatedBy = req.user?.name || 'system';
     return this.userService.create(createUserDto);
   }
 
+  // 取得使用者
   @Get()
   findAll(@Query() queryString: FindAllDto) {
     const page = +queryString.page || 1;
@@ -58,20 +60,13 @@ export class UserController {
     return this.userService.findAll({ skip, take, orderBy, select });
   }
 
+  // 取得一名使用者
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
-    console.log(typeof id);
     return this.userService.findOne(id);
   }
 
-  @Patch('info/:id')
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
-    return this.userService.update(id, updateUserDto);
-  }
-
+  // TODO
   @Patch('/password')
   changePassword(@Req() req: Request, @Body() body: ChangePwdDto) {
     const userId = req.user.id;
@@ -83,8 +78,17 @@ export class UserController {
     });
   }
 
+  // 更新使用者
+  @Patch('info/:id')
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.userService.update(id, updateUserDto);
+  }
+
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.remove(id);
   }
 }
