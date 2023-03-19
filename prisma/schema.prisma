@@ -8,7 +8,7 @@ datasource db {
 }
 
 model order {
-  id          String        @id
+  id          String        @id @default(uuid())
   createdById Int
   createdAt   DateTime      @default(now())
   user        user          @relation(fields: [createdById], references: [id], map: "Order_createdById_fkey")
