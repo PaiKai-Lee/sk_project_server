@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 
 enum Role {
   SuperAdmin = 'SuperAdmin',
@@ -9,9 +10,10 @@ enum Role {
 const prisma = new PrismaClient();
 
 async function main() {
+  const hashPassword = await bcrypt.hash('66666666', 10);
   const superAdmin = {
     name: 'superAdmin',
-    password: '66666666',
+    password: hashPassword,
     email: 'superAdmin@sk.com',
     role: Role.SuperAdmin,
     department: 'SuperAdmin',
@@ -20,9 +22,10 @@ async function main() {
   const users = [];
 
   for (let i = 0; i < 10; i++) {
+    const hashPassword = await bcrypt.hash('66666666', 10);
     const userInfo = {
       name: `testUser_${i}`,
-      password: '66666666',
+      password: hashPassword,
       email: `testUser_${i}@sk.com`,
       role: Role.User,
       department: 'temp',
@@ -34,7 +37,7 @@ async function main() {
 
   const bankruptUser = {
     name: 'testUser_x',
-    password: '66666666',
+    password: await bcrypt.hash('66666666', 10),
     email: 'testUser_x@sk.com',
     role: Role.User,
     department: 'temp',
