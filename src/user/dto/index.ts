@@ -51,7 +51,7 @@ export class FindAllDto {
 
   @IsOptional()
   @IsString()
-  select: string;
+  fields: string;
 }
 
 export class ChangePwdDto {

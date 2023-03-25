@@ -20,18 +20,10 @@ export class UserService {
     const { name, email, role, department, createdBy, updatedBy } =
       createUserDto;
 
-    const foundUser: User = await this.prisma.user.findUnique({
-      where: {
-        email,
-      },
-    });
-
-    if (foundUser) throw new ConflictException();
-
     const defaultPws = this.configService.get('DEFAULT_PWD');
     const saltRound = this.configService.get('SALT_ROUND');
     // hash password
-    const salt = await bcrypt.genSalt(+saltRound)
+    const salt = await bcrypt.genSalt(+saltRound);
     const hashPassword = await bcrypt.hash(defaultPws, salt);
 
     await this.prisma.user.create({
@@ -46,8 +38,7 @@ export class UserService {
       },
     });
 
-    return '成功建立使用者'
-  
+    return '成功建立使用者';
   }
 
   async findAll(params: {
@@ -102,5 +93,14 @@ export class UserService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  async isUserExists(email: string): Promise<boolean> {
+    const foundUser: User = await this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+    return foundUser ? true : false;
   }
 }

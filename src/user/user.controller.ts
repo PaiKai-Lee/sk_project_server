@@ -9,6 +9,7 @@ import {
   Delete,
   Query,
   ParseIntPipe,
+  ConflictException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto, UpdateUserDto, FindAllDto, ChangePwdDto } from './dto/';
@@ -22,6 +23,11 @@ export class UserController {
   // 創建使用者
   @Post()
   create(@Req() req: Request, @Body() createUserDto: CreateUserDto) {
+    const { email } = createUserDto;
+
+    const isExists = this.userService.isUserExists(email);
+    if (isExists) throw new ConflictException();
+
     createUserDto.createdBy = req.user?.name || 'system';
     createUserDto.updatedBy = req.user?.name || 'system';
     return this.userService.create(createUserDto);
@@ -33,6 +39,7 @@ export class UserController {
     const page = +queryString.page || 1;
     const take = +queryString.limit || 10;
     const skip = (page - 1) * take;
+    const fields = queryString.fields;
     const orderBy = {
       createdAt:
         queryString.order === 'asc'
@@ -47,9 +54,9 @@ export class UserController {
       role: true,
     };
 
-    if (queryString.select) {
+    if (fields) {
       // 選出DB實際有的欄位
-      const columns = queryString.select
+      const columns = fields
         .split(',')
         .filter((item) => item in Prisma.UserScalarFieldEnum);
 
