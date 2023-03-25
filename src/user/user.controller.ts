@@ -11,11 +11,13 @@ import {
   ParseIntPipe,
   ConflictException,
   NotAcceptableException,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto, UpdateUserDto, FindAllDto, ChangePwdDto } from './dto/';
 import { Prisma } from '@prisma/client';
 import { Request } from 'express';
+import { RoleGuard } from 'src/lib/role.guard';
 
 @Controller('user')
 export class UserController {
@@ -99,6 +101,7 @@ export class UserController {
     return this.userService.update(id, updateUserDto);
   }
 
+  @UseGuards(RoleGuard)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.userService.remove(id);

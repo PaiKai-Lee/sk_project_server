@@ -95,7 +95,20 @@ export class UserService {
     });
   }
 
-  remove(id: number) {
+  // TODO role guard admin
+  async remove(id: number) {
+    const deleteUser = await this.prisma.user.update({
+      data: {
+        isDelete: false,
+      },
+      where: {
+        id,
+      },
+    });
+    const { name } = deleteUser;
+
+    console.log(`remove user ${name} successfully`);
+
     return `This action removes a #${id} user`;
   }
 
