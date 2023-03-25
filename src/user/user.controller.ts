@@ -10,6 +10,7 @@ import {
   Query,
   ParseIntPipe,
   ConflictException,
+  NotAcceptableException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto, UpdateUserDto, FindAllDto, ChangePwdDto } from './dto/';
@@ -22,10 +23,10 @@ export class UserController {
 
   // 創建使用者
   @Post()
-  create(@Req() req: Request, @Body() createUserDto: CreateUserDto) {
+  async create(@Req() req: Request, @Body() createUserDto: CreateUserDto) {
     const { email } = createUserDto;
 
-    const isExists = this.userService.isUserExists(email);
+    const isExists = await this.userService.isUserExists(email);
     if (isExists) throw new ConflictException();
 
     createUserDto.createdBy = req.user?.name || 'system';

@@ -22,6 +22,8 @@ export class AppController {
 
     const { id, name, role, department, email, points, pwdChanged } = foundUser;
 
+    console.log(`user ${name} login successfully`);
+
     session.user = {
       id,
       name,
@@ -44,7 +46,9 @@ export class AppController {
 
   @Post('/logout')
   logout(@Session() session) {
+    const { name } = session.user;
     session.destroy();
+    console.log(`user ${name} logout successfully`);
     return 'success';
   }
 }

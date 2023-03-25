@@ -20,8 +20,6 @@ export class AuthService {
       },
     });
 
-    console.log(foundUser)
-
     if (!foundUser) throw new NotFoundException();
 
     const result = await bcrypt.compare(password, foundUser.password);
