@@ -76,17 +76,21 @@ export class UserController {
 
   // TODO
   @Patch('/password')
-  changePassword(@Req() req: Request, @Body() body: ChangePwdDto) {
-    const userId = req.user.id;
+  async changePassword(@Req() req: Request, @Body() body: ChangePwdDto) {
+    const { id, name } = req.user;
     const { password, confirmPassword } = body;
-    return this.userService.changePassword({
-      userId,
+
+    if (password !== confirmPassword) throw new NotAcceptableException();
+
+    await this.userService.changePassword({
+      id,
       password,
-      confirmPassword,
     });
+    console.log(`user ${name} changePassword successfully`);
+    return 'success';
   }
 
-  // 更新使用者
+  // TODO更新使用者
   @Patch('info/:id')
   update(
     @Param('id', ParseIntPipe) id: number,

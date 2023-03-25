@@ -75,16 +75,24 @@ export class UserService {
   }
 
   async changePassword({
-    userId,
+    id,
     password,
-    confirmPassword,
   }: {
-    userId: number;
+    id: number;
     password: string;
-    confirmPassword: string;
-  }) {
-    if (password !== confirmPassword) throw new NotAcceptableException();
-    return 'update user password';
+  }): Promise<void> {
+    // hash password
+    const saltRound = this.configService.get('SALT_ROUND');
+    const salt = await bcrypt.genSalt(+saltRound);
+    const hashPassword = await bcrypt.hash(password, salt);
+    await this.prisma.user.update({
+      data: {
+        password: hashPassword,
+      },
+      where: {
+        id,
+      },
+    });
   }
 
   remove(id: number) {
