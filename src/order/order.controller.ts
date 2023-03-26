@@ -1,15 +1,6 @@
-import {
-  Controller,
-  Req,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Req, Get, Post, Body, Param, Query } from '@nestjs/common';
 import { OrderService } from './order.service';
-import { CreateOrderDto } from './dto/create-order.dto';
+import { CreateOrderDto, FindAllDto } from './dto';
 import { Request } from 'express';
 
 @Controller('order')
@@ -27,17 +18,23 @@ export class OrderController {
   }
 
   @Get()
-  findAll() {
-    return this.orderService.findAll();
+  findAll(@Query() queryString: FindAllDto) {
+    const page = +queryString.page || 1;
+    const take = +queryString.limit || 10;
+    const skip = (page - 1) * take;
+    const include = {
+      user: {
+        select: {
+          name: true,
+        },
+      },
+    };
+
+    return this.orderService.findAll({ skip, take, include });
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.orderService.findOne(+id);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.orderService.remove(+id);
+    return this.orderService.findOne(id);
   }
 }

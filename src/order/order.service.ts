@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/lib/prisma.service';
 import { CreateOrder } from './interface';
 
@@ -69,15 +70,49 @@ export class OrderService {
     return 'This action adds a new order';
   }
 
-  findAll() {
-    return `This action returns all order`;
+  findAll(params: {
+    skip?: number;
+    take?: number;
+    include?: Prisma.orderInclude;
+  }) {
+    const { skip, take, include } = params;
+    return this.prisma.order.findMany({
+      skip,
+      take,
+      include,
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} order`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} order`;
+  findOne(id: string) {
+    return this.prisma.order.findUnique({
+      select: {
+        id: true,
+        createdAt: true,
+        user: {
+          select: {
+            name: true,
+          },
+        },
+        transaction: {
+          select: {
+            id: true,
+            save: true,
+            cost: true,
+            remark: true,
+            user: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+      where: {
+        id,
+      },
+    });
   }
 }
