@@ -1,34 +1,28 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
+import { FindAllDto } from './dto';
 import { TransactionService } from './transaction.service';
-import { CreateTransactionDto } from './dto/create-transaction.dto';
-import { UpdateTransactionDto } from './dto/update-transaction.dto';
 
 @Controller('transaction')
 export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
-
-  @Post()
-  create(@Body() createTransactionDto: CreateTransactionDto) {
-    return this.transactionService.create(createTransactionDto);
-  }
-
+  // TODO 排序 & 查詢條件尚未完成
   @Get()
-  findAll() {
-    return this.transactionService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.transactionService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTransactionDto: UpdateTransactionDto) {
-    return this.transactionService.update(+id, updateTransactionDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.transactionService.remove(+id);
+  findAll(@Query() queryString: FindAllDto) {
+    const page = +queryString.page || 1;
+    const take = +queryString.limit || 10;
+    const skip = (page - 1) * take;
+    const where = queryString.user
+      ? { user: { name: queryString.user } }
+      : undefined;
+    const orderBy = {
+      order: {
+        createdAt:
+          queryString.order === 'asc'
+            ? Prisma.SortOrder.asc
+            : Prisma.SortOrder.desc,
+      },
+    };
+    return this.transactionService.findAll({ take, skip, where, orderBy });
   }
 }

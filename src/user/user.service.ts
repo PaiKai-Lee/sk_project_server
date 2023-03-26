@@ -88,6 +88,7 @@ export class UserService {
     await this.prisma.user.update({
       data: {
         password: hashPassword,
+        pwdChanged: { increment: 1 },
       },
       where: {
         id,
@@ -95,7 +96,6 @@ export class UserService {
     });
   }
 
-  // TODO role guard admin
   async remove(id: number) {
     const deleteUser = await this.prisma.user.update({
       data: {

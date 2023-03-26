@@ -1,4 +1,4 @@
-import { CreateOrderDto } from '../dto/create-order.dto';
+import { CreateOrderDto } from '../dto/';
 
 export interface CreateOrder extends CreateOrderDto {
   id: number;
