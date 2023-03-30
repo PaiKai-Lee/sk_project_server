@@ -17,7 +17,7 @@ export class TransactionController {
       : undefined;
     const orderBy = {
       order: {
-        createdAt:
+        id:
           queryString.order === 'asc'
             ? Prisma.SortOrder.asc
             : Prisma.SortOrder.desc,

@@ -6,7 +6,24 @@ import { PrismaService } from 'src/lib/prisma.service';
 export class TransactionService {
   constructor(private readonly prisma: PrismaService) {}
   findAll(params: { take: number; skip: number; where: any; orderBy: any }) {
-    
-    return this.prisma.transaction.findMany({});
+    const { take, skip, where, orderBy } = params;
+    return this.prisma.transaction.findMany({
+      select: {
+        id: true,
+        orderId: true,
+        save: true,
+        cost: true,
+        remark: true,
+        user: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      orderBy,
+      skip,
+      take,
+      where,
+    });
   }
 }
