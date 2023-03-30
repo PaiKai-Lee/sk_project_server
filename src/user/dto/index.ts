@@ -11,7 +11,7 @@ import {
 
 import { PartialType } from '@nestjs/mapped-types';
 
-import { user_role } from '@prisma/client';
+import { UserRole } from '@prisma/client';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -22,8 +22,8 @@ export class CreateUserDto {
   email: string;
 
   @IsNotEmpty()
-  @IsEnum(user_role)
-  role: user_role;
+  @IsEnum(UserRole)
+  role: UserRole;
 
   @IsOptional()
   @IsString()

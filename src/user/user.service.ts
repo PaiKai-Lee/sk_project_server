@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/lib/prisma.service';
 import { CreateUserDto, UpdateUserDto } from './dto';
-import { user as User, Prisma } from '@prisma/client';
+import { User, Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 
@@ -40,8 +40,8 @@ export class UserService {
   async findAll(params: {
     skip?: number;
     take?: number;
-    select?: Prisma.userSelect;
-    orderBy?: Prisma.userOrderByWithRelationInput;
+    select?: Prisma.UserSelect;
+    orderBy?: Prisma.UserOrderByWithRelationInput;
   }) {
     const { skip, take, orderBy, select } = params;
     return this.prisma.user.findMany({

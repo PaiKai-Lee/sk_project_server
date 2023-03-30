@@ -74,7 +74,7 @@ export class OrderService {
   findAll(params: {
     skip?: number;
     take?: number;
-    include?: Prisma.orderInclude;
+    include?: Prisma.OrderInclude;
   }) {
     const { skip, take, include } = params;
     return this.prisma.order.findMany({

@@ -6,7 +6,7 @@ import { OrderModule } from './order/order.module';
 import { TransactionModule } from './transaction/transaction.module';
 import { UserModule } from './user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AuthMiddleware } from './lib/auth.middleware';
+import { AuthMiddleware } from './lib/middlewares/auth.middleware';
 
 @Module({
   imports: [
