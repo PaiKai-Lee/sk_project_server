@@ -14,11 +14,18 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto, UpdateUserDto, FindAllDto, ChangePwdDto } from './dto/';
+import {
+  CreateUserDto,
+  UpdateUserDto,
+  FindAllDto,
+  ChangePwdDto,
+} from './dto/index.dto';
 import { Prisma } from '@prisma/client';
 import { Request } from 'express';
 import { RoleGuard } from 'src/lib/role.guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('使用者')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -31,9 +38,12 @@ export class UserController {
     const isExists = await this.userService.isUserExists(email);
     if (isExists) throw new ConflictException();
 
-    createUserDto.createdBy = req.user?.name || 'system';
-    createUserDto.updatedBy = req.user?.name || 'system';
-    return this.userService.create(createUserDto);
+    const createUser = {
+      ...createUserDto,
+      createdBy: req.user?.name || 'system',
+      updatedBy: req.user?.name || 'system',
+    };
+    return this.userService.create(createUser);
   }
 
   // 取得使用者

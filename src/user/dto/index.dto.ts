@@ -12,6 +12,7 @@ import {
 import { PartialType } from '@nestjs/mapped-types';
 
 import { UserRole } from '@prisma/client';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -21,6 +22,7 @@ export class CreateUserDto {
   @Matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, { message: 'email 格式錯誤' })
   email: string;
 
+  @ApiProperty({ name: 'role', enum: UserRole })
   @IsNotEmpty()
   @IsEnum(UserRole)
   role: UserRole;
@@ -28,10 +30,6 @@ export class CreateUserDto {
   @IsOptional()
   @IsString()
   department: string;
-
-  createdBy?: string;
-
-  updatedBy?: string;
 }
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {}
@@ -39,19 +37,19 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {}
 export class FindAllDto {
   @IsOptional()
   @IsNumberString()
-  page: number;
+  page?: number;
 
   @IsOptional()
   @IsNumberString()
-  limit: number;
+  limit?: number;
 
   @IsOptional()
   @IsString()
-  order: string;
+  order?: string;
 
   @IsOptional()
   @IsString()
-  fields: string;
+  fields?: string;
 }
 
 export class ChangePwdDto {

@@ -1,12 +1,14 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { FindAllDto } from './dto';
 import { TransactionService } from './transaction.service';
+import { FindAllDto } from './dto/index.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('交易明細')
 @Controller('transaction')
 export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
-  // TODO 排序 & 查詢條件尚未完成
+  
   @Get()
   findAll(@Query() queryString: FindAllDto) {
     const page = +queryString.page || 1;

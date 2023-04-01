@@ -39,9 +39,9 @@ export class CreateOrderDto {
 export class FindAllDto {
   @IsOptional()
   @IsNumberString()
-  page: number;
+  page?: number;
 
   @IsOptional()
   @IsNumberString()
-  limit: number;
+  limit?: number;
 }

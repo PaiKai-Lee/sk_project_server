@@ -3,17 +3,17 @@ import { IsNumberString, IsOptional, IsString } from 'class-validator';
 export class FindAllDto {
   @IsOptional()
   @IsNumberString()
-  page: number;
+  page?: number;
 
   @IsOptional()
   @IsNumberString()
-  limit: number;
+  limit?: number;
 
   @IsOptional()
   @IsString()
-  order: string;
+  order?: string;
 
   @IsOptional()
   @IsString()
-  user: string;
+  user?: string;
 }

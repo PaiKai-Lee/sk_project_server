@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/lib/prisma.service';
-import { CreateUserDto, UpdateUserDto } from './dto';
+import { UpdateUserDto } from './dto/index.dto';
 import { User, Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
+import { CreateUser } from './interface';
 
 @Injectable()
 export class UserService {
@@ -12,10 +13,14 @@ export class UserService {
     private readonly configService: ConfigService,
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
-    const { name, email, role, department, createdBy, updatedBy } =
-      createUserDto;
-
+  async create({
+    name,
+    email,
+    role,
+    department,
+    createdBy,
+    updatedBy,
+  }: CreateUser) {
     const defaultPws = this.configService.get('DEFAULT_PWD');
     const saltRound = this.configService.get('SALT_ROUND');
     // hash password
