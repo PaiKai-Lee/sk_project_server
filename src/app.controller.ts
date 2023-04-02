@@ -16,6 +16,11 @@ export class AppController {
     return this.appService.getHello();
   }
 
+  @Get('/check')
+  async checkUser(@Session() session: SessionData) {
+    return session?.user
+  }
+
   @Post('/login')
   async login(@Body() loginDto: loginDto, @Session() session: SessionData) {
     const foundUser = await this.authService.login(loginDto);
