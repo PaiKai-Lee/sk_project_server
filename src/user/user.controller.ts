@@ -22,7 +22,7 @@ import {
 } from './dto/index.dto';
 import { Prisma } from '@prisma/client';
 import { Request } from 'express';
-import { RoleGuard } from 'src/lib/role.guard';
+import { RoleGuard } from 'src/lib/guards/role.guard';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('使用者')
