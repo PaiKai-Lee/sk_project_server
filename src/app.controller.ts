@@ -1,42 +1,39 @@
-import { Controller, Get, Post, Session, Body } from '@nestjs/common';
-import { SessionData } from 'express-session';
+import { Controller, Get, Post, Body, Req } from '@nestjs/common';
 import { AppService } from './app.service';
-import { AuthService } from './auth.service';
+import { AuthService } from './lib/services/auth.service';
+import { JwtService } from '@nestjs/jwt';
 import { loginDto } from './app.dto';
+import { Request } from 'express';
 
 @Controller()
 export class AppController {
   constructor(
     private readonly appService: AppService,
     private readonly authService: AuthService,
+    private readonly jwtService: JwtService,
   ) {}
 
   @Get()
-  getHello(@Session() session): string {
+  getHello(): string {
     return this.appService.getHello();
   }
 
   @Get('/check')
-  async checkUser(@Session() session: SessionData) {
-    return session?.user
+  async checkUser(@Req() req: Request) {
+    return req.user;
   }
 
   @Post('/login')
-  async login(@Body() loginDto: loginDto, @Session() session: SessionData) {
+  async login(@Body() loginDto: loginDto) {
     const foundUser = await this.authService.login(loginDto);
 
     const { id, name, role, department, email, points, pwdChanged } = foundUser;
 
-    console.log(`user ${name} login successfully`);
+    const payload = { id, name, email };
 
-    session.user = {
-      id,
-      name,
-      email,
-      role,
-      department,
-      points,
-    };
+    const accessToken = await this.jwtService.signAsync(payload);
+
+    console.log(`user ${name} login successfully`);
 
     return {
       id,
@@ -46,14 +43,8 @@ export class AppController {
       department,
       points,
       pwdChanged,
+      accessToken,
     };
   }
 
-  @Post('/logout')
-  logout(@Session() session) {
-    const { name } = session.user;
-    session.destroy();
-    console.log(`user ${name} logout successfully`);
-    return 'success';
-  }
 }
