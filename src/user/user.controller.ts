@@ -50,14 +50,23 @@ export class UserController {
   @Get()
   findAll(@Query() queryString: FindAllDto) {
     const page = +queryString.page || 1;
-    const take = +queryString.limit || 10;
-    const skip = (page - 1) * take;
+    const take = +queryString.limit || undefined;
+    const skip = (page - 1) * take || undefined;
     const fields = queryString.fields;
+
+    const [column, sort] = queryString.order.split(',');
+
+    const COLUMN = {
+      points: 'points',
+      createdAt: 'createdAt',
+      id: 'id',
+    };
+
+    const filterColumn = COLUMN[column] || 'createdAt';
+
     const orderBy = {
-      createdAt:
-        queryString.order === 'asc'
-          ? Prisma.SortOrder.asc
-          : Prisma.SortOrder.desc,
+      [filterColumn]:
+        sort === 'asc' ? Prisma.SortOrder.asc : Prisma.SortOrder.desc,
     };
 
     // 基本提供的訊息
