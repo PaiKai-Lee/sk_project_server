@@ -95,7 +95,7 @@ export class UserController {
     return this.userService.findOne(id);
   }
 
-  // TODO
+  // 使用者更新密碼
   @Patch('/password')
   async changePassword(@Req() req: Request, @Body() body: ChangePwdDto) {
     const { id, name } = req.user;
@@ -120,6 +120,7 @@ export class UserController {
     return this.userService.update(id, updateUserDto);
   }
 
+  // 刪除使用者
   @UseGuards(RoleGuard)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {

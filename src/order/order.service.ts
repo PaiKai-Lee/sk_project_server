@@ -25,7 +25,7 @@ export class OrderService {
       });
 
       //調整金額
-      const updatedUsers = foundUsersAndPoints.map((user) => {
+      let updatedUsers = foundUsersAndPoints.map((user) => {
         const transferItem = transferData.find((item) => item.id === user.id);
         if (transferItem) {
           user.points += transferItem.save - transferItem.cost;

@@ -9,6 +9,7 @@ import { ApiTags } from '@nestjs/swagger';
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
+  // 建立一筆交易
   @Post()
   create(@Req() req: Request, @Body() createOrderDto: CreateOrderDto) {
     const { id } = req.user;
@@ -19,6 +20,7 @@ export class OrderController {
     return this.orderService.create(createOrderData);
   }
 
+  // 取得交易清單
   @Get()
   findAll(@Query() queryString: FindAllDto) {
     const page = +queryString.page || 1;
@@ -35,6 +37,7 @@ export class OrderController {
     return this.orderService.findAll({ skip, take, include });
   }
 
+  // 取得一筆交易清單
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.orderService.findOne(id);

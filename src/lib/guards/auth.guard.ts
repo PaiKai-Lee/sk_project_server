@@ -20,8 +20,11 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
+    const { path, method } = request;
+  
     // 設定不需要使用auth guard的路由
-    if (request.path === '/api/login' || request.path === '/api/') return true;
+    if (path === '/api/' || path === '/api/login') return true;
+    if (method === 'GET' && path === '/api/transaction') return true;
 
     const token = this.extractTokenFromHeader(request);
     if (!token) {
@@ -31,7 +34,6 @@ export class AuthGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: this.configService.get('JWT_SECRET'),
       });
-
       const foundUser = await this.prisma.user.findUnique({
         where: { id: payload.id },
       });

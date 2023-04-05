@@ -19,6 +19,11 @@ export class TransactionService {
             name: true,
           },
         },
+        order: {
+          select: {
+            createdAt: true,
+          },
+        },
       },
       orderBy,
       skip,
