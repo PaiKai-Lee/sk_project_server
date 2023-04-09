@@ -53,8 +53,11 @@ export class UserController {
     const take = +queryString.limit || undefined;
     const skip = (page - 1) * take || undefined;
     const fields = queryString.fields;
-
-    const [column, sort] = queryString.order.split(',');
+    let column: string;
+    let sort: string;
+    if (queryString.order) {
+      [column, sort] = queryString.order.split(',');
+    }
 
     const COLUMN = {
       points: 'points',
