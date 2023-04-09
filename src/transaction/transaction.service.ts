@@ -1,26 +1,46 @@
 import { Injectable } from '@nestjs/common';
-import { CreateTransactionDto } from './dto/create-transaction.dto';
-import { UpdateTransactionDto } from './dto/update-transaction.dto';
+import { Prisma } from '@prisma/client';
+import { PrismaService } from 'src/lib/services/prisma.service';
 
 @Injectable()
 export class TransactionService {
-  create(createTransactionDto: CreateTransactionDto) {
-    return 'This action adds a new transaction';
-  }
-
-  findAll() {
-    return `This action returns all transaction`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} transaction`;
-  }
-
-  update(id: number, updateTransactionDto: UpdateTransactionDto) {
-    return `This action updates a #${id} transaction`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} transaction`;
+  constructor(private readonly prisma: PrismaService) {}
+  async findAll(params: {
+    take: number;
+    skip: number;
+    where: any;
+    orderBy: any;
+  }) {
+    const { take, skip, where, orderBy } = params;
+    const [result, count] = await Promise.all([
+      this.prisma.transaction.findMany({
+        select: {
+          id: true,
+          orderId: true,
+          save: true,
+          cost: true,
+          remark: true,
+          user: {
+            select: {
+              name: true,
+            },
+          },
+          order: {
+            select: {
+              createdAt: true,
+            },
+          },
+        },
+        orderBy,
+        skip,
+        take,
+        where,
+      }),
+      this.prisma.transaction.count({ where }),
+    ]);
+    return {
+      data:result,
+      count,
+    };
   }
 }

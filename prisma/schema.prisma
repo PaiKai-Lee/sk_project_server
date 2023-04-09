@@ -7,49 +7,49 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model order {
-  id          String        @id
+model Order {
+  id          String        @id @default(uuid())
   createdById Int
   createdAt   DateTime      @default(now())
-  user        user          @relation(fields: [createdById], references: [id], map: "Order_createdById_fkey")
-  transaction transaction[]
+  user        User          @relation(fields: [createdById], references: [id], map: "Order_createdById_fkey")
+  transaction Transaction[]
 
   @@index([createdById], map: "Order_createdById_fkey")
 }
 
-model transaction {
+model Transaction {
   id      Int     @id @default(autoincrement())
   userId  Int?
   orderId String
   save    Int
   cost    Int
   remark  String?
-  order   order   @relation(fields: [orderId], references: [id], map: "Transaction_orderId_fkey")
-  user    user?   @relation(fields: [userId], references: [id], map: "Transaction_userId_fkey")
+  order   Order   @relation(fields: [orderId], references: [id], map: "Transaction_orderId_fkey")
+  user    User?   @relation(fields: [userId], references: [id], map: "Transaction_userId_fkey")
 
   @@index([orderId], map: "Transaction_orderId_fkey")
   @@index([userId], map: "Transaction_userId_fkey")
 }
 
-model user {
+model User {
   id          Int           @id @default(autoincrement())
   name        String
   password    String
   email       String        @unique(map: "User_email_key")
   department  String
-  role        user_role
+  role        UserRole
   createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
   createdBy   String        @default("system")
   updatedBy   String        @default("system")
   isDelete    Boolean       @default(false)
   pwdChanged  Int           @default(0)
   points      Int           @default(0)
-  order       order[]
-  transaction transaction[]
+  order       Order[]
+  transaction Transaction[]
 }
 
-enum user_role {
+enum UserRole {
   SuperAdmin
   Admin
   User
