@@ -93,13 +93,29 @@ export class UserController {
   }
 
   // 取得一名使用者
-  @Get(':id')
+  @Get(':id(\\d+)')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.userService.findOne(id);
   }
 
+  @Get('points')
+  async getUserPoints() {
+    const orderBy = {
+      points: Prisma.SortOrder.desc,
+    };
+
+    // 基本提供的訊息
+    const select = {
+      id: true,
+      name: true,
+      points: true,
+    };
+
+    return this.userService.findAll({ orderBy, select });
+  }
+
   // 使用者更新密碼
-  @Patch('/password')
+  @Patch('password')
   async changePassword(@Req() req: Request, @Body() body: ChangePwdDto) {
     const { id, name } = req.user;
     const { password, confirmPassword } = body;

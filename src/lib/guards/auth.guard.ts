@@ -21,10 +21,11 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
 
     const { path, method } = request;
-  
+
     // 設定不需要使用auth guard的路由
     if (path === '/api/' || path === '/api/login') return true;
     if (method === 'GET' && path === '/api/transaction') return true;
+    if (method === 'GET' && path === '/api/user/points') return true;
 
     const token = this.extractTokenFromHeader(request);
     if (!token) {
