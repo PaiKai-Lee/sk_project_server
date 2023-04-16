@@ -17,7 +17,7 @@ async function bootstrap() {
       'Accept',
       'X-Requested-With',
     ],
-    methods: ['PUT', 'POST', 'GET', 'DELETE', 'OPTIONS'],
+    methods: ['PUT', 'POST', 'GET', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true,
   });
   app.useGlobalPipes(new ValidationPipe());
