@@ -9,12 +9,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthGuard } from './lib/guards/auth.guard';
 import { APP_GUARD } from '@nestjs/core';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
     OrderModule,
     TransactionModule,
     UserModule,
+    AdminModule,
     ConfigModule.forRoot({ isGlobal: true }),
     JwtModule.registerAsync({
       imports: [ConfigModule],

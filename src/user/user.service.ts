@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/lib/services/prisma.service';
-import { UpdateUserDto } from './dto/index.dto';
 import { User, Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
-import { CreateUser } from './interface';
+import { CreateUser, UpdateUser } from './interface';
 
 @Injectable()
 export class UserService {
@@ -68,23 +67,37 @@ export class UserService {
     });
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
-    // const {name,password,email,department,role}
-    // this.prisma.user.update({
-    //   where:{
-    //     id
-    //   },
-    //   data:updateUserDto
-    // })
-    return `This action updates a #${id} user`;
+  async update({ id, name, email, role, department, updatedBy }: UpdateUser) {
+    const updatedData = await this.prisma.user.update({
+      data: {
+        name,
+        email,
+        role,
+        department,
+        updatedBy,
+      },
+      where: {
+        id,
+      },
+    });
+
+    return {
+      id,
+      name: updatedData.name,
+      email: updatedData.email,
+      role: updatedData.role,
+      department: updatedData.department,
+    };
   }
 
   async changePassword({
     id,
     password,
+    updatedBy,
   }: {
     id: number;
     password: string;
+    updatedBy: string;
   }): Promise<void> {
     // hash password
     const saltRound = this.configService.get('SALT_ROUND');
@@ -94,6 +107,7 @@ export class UserService {
       data: {
         password: hashPassword,
         pwdChanged: { increment: 1 },
+        updatedBy,
       },
       where: {
         id,
@@ -101,10 +115,29 @@ export class UserService {
     });
   }
 
-  async remove(id: number) {
+  async resetPassword({ id, updatedBy }: { id: number; updatedBy: string }) {
+    const defaultPws = this.configService.get('DEFAULT_PWD');
+    const saltRound = this.configService.get('SALT_ROUND');
+    // hash password
+    const salt = await bcrypt.genSalt(+saltRound);
+    const hashPassword = await bcrypt.hash(defaultPws, salt);
+    await this.prisma.user.update({
+      data: {
+        password: hashPassword,
+        pwdChanged: 0,
+        updatedBy,
+      },
+      where: {
+        id,
+      },
+    });
+  }
+
+  async remove({ id, updatedBy }: { id: number; updatedBy: string }) {
     const deleteUser = await this.prisma.user.update({
       data: {
-        isDelete: false,
+        isDelete: true,
+        updatedBy,
       },
       where: {
         id,

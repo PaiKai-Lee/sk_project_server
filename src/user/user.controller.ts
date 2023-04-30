@@ -2,49 +2,26 @@ import {
   Controller,
   Req,
   Get,
-  Post,
   Body,
   Patch,
   Param,
-  Delete,
   Query,
   ParseIntPipe,
-  ConflictException,
   NotAcceptableException,
-  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import {
-  CreateUserDto,
-  UpdateUserDto,
   FindAllDto,
   ChangePwdDto,
 } from './dto/index.dto';
 import { Prisma } from '@prisma/client';
 import { Request } from 'express';
-import { RoleGuard } from 'src/lib/guards/role.guard';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('使用者')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-
-  // 創建使用者
-  @Post()
-  async create(@Req() req: Request, @Body() createUserDto: CreateUserDto) {
-    const { email } = createUserDto;
-
-    const isExists = await this.userService.isUserExists(email);
-    if (isExists) throw new ConflictException();
-
-    const createUser = {
-      ...createUserDto,
-      createdBy: req.user?.name || 'system',
-      updatedBy: req.user?.name || 'system',
-    };
-    return this.userService.create(createUser);
-  }
 
   // 取得使用者
   @Get()
@@ -125,24 +102,9 @@ export class UserController {
     await this.userService.changePassword({
       id,
       password,
+      updatedBy:name
     });
     console.log(`user ${name} changePassword successfully`);
     return 'success';
-  }
-
-  // TODO更新使用者
-  @Patch('info/:id')
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
-    return this.userService.update(id, updateUserDto);
-  }
-
-  // 刪除使用者
-  @UseGuards(RoleGuard)
-  @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.remove(id);
   }
 }
