@@ -8,11 +8,7 @@ import {
 
 import { PartialType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
-
-enum AccessRole {
-  Admin = "Admin",
-  User = 'User'
-}
+import { AccessCreateRole } from 'src/lib/enum';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -22,10 +18,10 @@ export class CreateUserDto {
   @Matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, { message: 'email 格式錯誤' })
   email: string;
 
-  @ApiProperty({ name: 'role', enum: AccessRole })
+  @ApiProperty({ name: 'role', enum: AccessCreateRole })
   @IsNotEmpty()
-  @IsEnum(AccessRole)
-  role: AccessRole;
+  @IsEnum(AccessCreateRole)
+  role: AccessCreateRole;
 
   @IsOptional()
   @IsString()

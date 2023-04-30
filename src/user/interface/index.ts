@@ -1,12 +1,9 @@
-enum AccessRole {
-  Admin = 'Admin',
-  User = 'User',
-}
+import { AccessCreateRole } from "src/lib/enum";
 
 export interface CreateUser {
   name: string;
   email: string;
-  role: AccessRole;
+  role: AccessCreateRole;
   department: string;
   createdBy: string;
   updatedBy: string;
