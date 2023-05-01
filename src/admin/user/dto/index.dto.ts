@@ -4,6 +4,7 @@ import {
   IsEnum,
   IsOptional,
   Matches,
+  IsBoolean,
 } from 'class-validator';
 
 import { PartialType } from '@nestjs/mapped-types';
@@ -28,4 +29,8 @@ export class CreateUserDto {
   department: string;
 }
 
-export class UpdateUserDto extends PartialType(CreateUserDto) {}
+export class UpdateUserDto extends PartialType(CreateUserDto) {
+  @IsOptional()
+  @IsBoolean()
+  isDelete:boolean;
+}

@@ -26,7 +26,7 @@ export class UserService {
     const salt = await bcrypt.genSalt(+saltRound);
     const hashPassword = await bcrypt.hash(defaultPws, salt);
 
-    await this.prisma.user.create({
+    const result = await this.prisma.user.create({
       data: {
         name,
         password: hashPassword,
@@ -38,7 +38,13 @@ export class UserService {
       },
     });
 
-    return '成功建立使用者';
+    return {
+      id: result.id,
+      name: result.name,
+      role: result.role,
+      email: result.email,
+      department: result.department,
+    };
   }
 
   async findAll(params: {
@@ -46,16 +52,15 @@ export class UserService {
     take?: number;
     select?: Prisma.UserSelect;
     orderBy?: Prisma.UserOrderByWithRelationInput;
+    where?:Prisma.UserWhereInput
   }) {
-    const { skip, take, orderBy, select } = params;
+    const { skip, take, orderBy, select, where } = params;
     return this.prisma.user.findMany({
       skip,
       take,
       select,
       orderBy,
-      where: {
-        isDelete: false,
-      },
+      where
     });
   }
 
@@ -67,12 +72,13 @@ export class UserService {
     });
   }
 
-  async update({ id, name, email, role, department, updatedBy }: UpdateUser) {
+  async update({ id, name, email, role, isDelete, department, updatedBy }: UpdateUser) {
     const updatedData = await this.prisma.user.update({
       data: {
         name,
         email,
         role,
+        isDelete,
         department,
         updatedBy,
       },

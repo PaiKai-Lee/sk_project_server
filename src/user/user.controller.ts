@@ -10,10 +10,7 @@ import {
   NotAcceptableException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import {
-  FindAllDto,
-  ChangePwdDto,
-} from './dto/index.dto';
+import { FindAllDto, ChangePwdDto } from './dto/index.dto';
 import { Prisma } from '@prisma/client';
 import { Request } from 'express';
 import { ApiTags } from '@nestjs/swagger';
@@ -66,7 +63,9 @@ export class UserController {
         select[column] = true;
       });
     }
-    return this.userService.findAll({ skip, take, orderBy, select });
+
+    const where = queryString.hideDelete ? { isDelete: false } : undefined;
+    return this.userService.findAll({ skip, take, orderBy, select, where });
   }
 
   // 取得一名使用者
@@ -102,7 +101,7 @@ export class UserController {
     await this.userService.changePassword({
       id,
       password,
-      updatedBy:name
+      updatedBy: name,
     });
     console.log(`user ${name} changePassword successfully`);
     return 'success';

@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import {
   IsNotEmpty,
   IsString,
@@ -5,6 +6,7 @@ import {
   IsNumberString,
   IsAlphanumeric,
   Length,
+  IsBoolean,
 } from 'class-validator';
 
 export class FindAllDto {
@@ -23,6 +25,11 @@ export class FindAllDto {
   @IsOptional()
   @IsString()
   fields?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({value}) => Boolean(value))
+  hideDelete?:boolean;
 }
 
 export class ChangePwdDto {

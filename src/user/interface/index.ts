@@ -1,4 +1,4 @@
-import { AccessCreateRole } from "src/lib/enum";
+import { AccessCreateRole } from 'src/lib/enum';
 
 export interface CreateUser {
   name: string;
@@ -11,4 +11,5 @@ export interface CreateUser {
 
 export interface UpdateUser extends Omit<Partial<CreateUser>, 'createdBy'> {
   id: number;
+  isDelete: boolean;
 }

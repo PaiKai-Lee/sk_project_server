@@ -65,7 +65,7 @@ export class UserController {
       id,
       updatedBy: req.user.name,
     };
-
+    
     return this.userService.update(updateUser);
   }
 
