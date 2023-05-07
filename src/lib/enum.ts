@@ -3,3 +3,8 @@ export enum Role {
   Admin = 'Admin',
   User = 'User',
 }
+
+export enum AccessCreateRole {
+  Admin = 'Admin',
+  User = 'User',
+}
