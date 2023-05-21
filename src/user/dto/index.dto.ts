@@ -31,13 +31,3 @@ export class FindAllDto {
   @Transform(({ value }) => Boolean(value))
   hideDelete?: boolean;
 }
-
-export class ChangePwdDto {
-  @IsNotEmpty()
-  @IsAlphanumeric()
-  @Length(6, 12)
-  password: string;
-
-  @IsNotEmpty()
-  confirmPassword: string;
-}
