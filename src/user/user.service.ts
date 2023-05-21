@@ -4,6 +4,7 @@ import { User, Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { CreateUser, UpdateUser } from './interface';
+import * as fs from 'fs/promises';
 
 @Injectable()
 export class UserService {
@@ -52,7 +53,7 @@ export class UserService {
     take?: number;
     select?: Prisma.UserSelect;
     orderBy?: Prisma.UserOrderByWithRelationInput;
-    where?:Prisma.UserWhereInput
+    where?: Prisma.UserWhereInput;
   }) {
     const { skip, take, orderBy, select, where } = params;
     return this.prisma.user.findMany({
@@ -60,19 +61,36 @@ export class UserService {
       take,
       select,
       orderBy,
-      where
+      where,
     });
   }
 
   async findOne(id: number) {
     return this.prisma.user.findUnique({
+      select: {
+        id: true,
+        name: true,
+        role: true,
+        email: true,
+        department: true,
+        points: true,
+        avatar:true
+      },
       where: {
         id,
       },
     });
   }
 
-  async update({ id, name, email, role, isDelete, department, updatedBy }: UpdateUser) {
+  async update({
+    id,
+    name,
+    email,
+    role,
+    isDelete,
+    department,
+    updatedBy,
+  }: UpdateUser) {
     const updatedData = await this.prisma.user.update({
       data: {
         name,
@@ -163,5 +181,36 @@ export class UserService {
       },
     });
     return foundUser ? true : false;
+  }
+
+  async updateAvatar(id: number, avatarPath: string) {
+    return this.prisma.user.update({
+      data: {
+        avatar: avatarPath,
+      },
+      where: {
+        id,
+      },
+    });
+  }
+
+  async removeOldAvatar(id: number): Promise<void> {
+    const data = await this.prisma.user.findUnique({
+      select: {
+        avatar: true,
+      },
+      where: {
+        id,
+      },
+    });
+    const { avatar: oldAvatarPath } = data;
+    if (oldAvatarPath) {
+      try{
+        const rootPath =  process.cwd();
+        await fs.unlink(rootPath + '/public/' + oldAvatarPath);
+      }catch(err){
+        console.log(err)
+      }
+    }
   }
 }

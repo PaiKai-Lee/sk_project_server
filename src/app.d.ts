@@ -8,6 +8,7 @@ interface User {
   department: string;
   points: number;
   pwdChanged: number;
+  avatar: string;
 }
 
 declare module 'express' {
