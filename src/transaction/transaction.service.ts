@@ -39,8 +39,23 @@ export class TransactionService {
       this.prisma.transaction.count({ where }),
     ]);
     return {
-      data:result,
+      data: result,
       count,
     };
+  }
+
+  findAllById(id: number) {
+    return this.prisma.transaction.findMany({
+      select: {
+        id: true,
+        orderId: true,
+        save: true,
+        cost: true,
+        remark: true,
+      },
+      where: {
+        id,
+      },
+    });
   }
 }
