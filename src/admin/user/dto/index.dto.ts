@@ -1,11 +1,4 @@
-import {
-  IsNotEmpty,
-  IsString,
-  IsEnum,
-  IsOptional,
-  Matches,
-  IsBoolean,
-} from 'class-validator';
+import { IsNotEmpty, IsString, IsEnum, IsOptional, Matches, IsBoolean } from 'class-validator';
 
 import { PartialType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
@@ -32,5 +25,5 @@ export class CreateUserDto {
 export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsOptional()
   @IsBoolean()
-  isDelete:boolean;
+  isDelete: boolean;
 }

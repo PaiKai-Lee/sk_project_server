@@ -14,14 +14,9 @@ export class TransactionController {
     const page = +queryString.page || 1;
     const take = +queryString.limit || undefined;
     const skip = (page - 1) * take || undefined;
-    const where = queryString.user
-      ? { user: { name: queryString.user } }
-      : undefined;
+    const where = queryString.user ? { user: { name: queryString.user } } : undefined;
     const orderBy = {
-      id:
-        queryString.order === 'asc'
-          ? Prisma.SortOrder.asc
-          : Prisma.SortOrder.desc,
+      id: queryString.order === 'asc' ? Prisma.SortOrder.asc : Prisma.SortOrder.desc
     };
     return this.transactionService.findAll({ take, skip, where, orderBy });
   }

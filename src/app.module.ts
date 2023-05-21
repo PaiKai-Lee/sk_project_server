@@ -23,18 +23,19 @@ import { join } from 'path';
     MeModule,
     ConfigModule.forRoot({ isGlobal: true }),
     ServeStaticModule.forRoot({
-      serveRoot:'/',
-      rootPath: join(__dirname, '../../', 'public'),serveStaticOptions:{
-        index:false
+      serveRoot: '/',
+      rootPath: join(__dirname, '../../', 'public'),
+      serveStaticOptions: {
+        index: false
       }
     }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '5h' },
+        signOptions: { expiresIn: '5h' }
       }),
-      inject: [ConfigService],
+      inject: [ConfigService]
     })
   ],
   controllers: [AppController],
@@ -44,8 +45,8 @@ import { join } from 'path';
     ConfigService,
     {
       provide: APP_GUARD,
-      useClass: AuthGuard,
-    },
-  ],
+      useClass: AuthGuard
+    }
+  ]
 })
 export class AppModule {}

@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { loginDto } from '../../app.dto';
 import { PrismaService } from './prisma.service';
@@ -16,8 +12,8 @@ export class AuthService {
     const foundUser = await this.prisma.user.findFirst({
       where: {
         email: email,
-        isDelete: false,
-      },
+        isDelete: false
+      }
     });
 
     if (!foundUser) throw new NotFoundException();

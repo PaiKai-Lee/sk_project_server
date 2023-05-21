@@ -12,11 +12,10 @@ const storage = diskStorage({
   destination: './public/upload',
   filename: (req, file, callback) => {
     const { name, id } = req.user;
-    const uniqueName =
-      name.toLowerCase() + id + '-' + Math.random().toString(36).slice(2, 7);
+    const uniqueName = name.toLowerCase() + id + '-' + Math.random().toString(36).slice(2, 7);
     const extension = extname(file.originalname);
     callback(null, `${uniqueName}${extension}`);
-  },
+  }
 });
 
 @Module({
@@ -31,20 +30,17 @@ const storage = diskStorage({
             if (acceptType.includes(file.mimetype)) {
               callback(null, true);
             } else {
-              callback(
-                new UnsupportedMediaTypeException('mimeType Error'),
-                false,
-              );
+              callback(new UnsupportedMediaTypeException('mimeType Error'), false);
             }
           },
           limits: {
-            fileSize: parseInt(configService.get('AVATAR_SIZE')),
-          },
+            fileSize: parseInt(configService.get('AVATAR_SIZE'))
+          }
         };
       },
-      inject: [ConfigService],
-    }),
+      inject: [ConfigService]
+    })
   ],
-  providers: [UserService, PrismaService, TransactionService],
+  providers: [UserService, PrismaService, TransactionService]
 })
 export class MeModule {}

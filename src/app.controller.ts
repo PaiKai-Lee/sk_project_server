@@ -10,7 +10,7 @@ export class AppController {
   constructor(
     private readonly appService: AppService,
     private readonly authService: AuthService,
-    private readonly jwtService: JwtService,
+    private readonly jwtService: JwtService
   ) {}
 
   @Get()
@@ -43,8 +43,7 @@ export class AppController {
       department,
       points,
       pwdChanged,
-      accessToken,
+      accessToken
     };
   }
-
 }

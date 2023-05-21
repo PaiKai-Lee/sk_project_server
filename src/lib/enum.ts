@@ -1,10 +1,10 @@
 export enum Role {
   SuperAdmin = 'SuperAdmin',
   Admin = 'Admin',
-  User = 'User',
+  User = 'User'
 }
 
 export enum AccessCreateRole {
   Admin = 'Admin',
-  User = 'User',
+  User = 'User'
 }

@@ -6,7 +6,7 @@ import {
   Patch,
   Req,
   UseInterceptors,
-  UploadedFile,
+  UploadedFile
 } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { TransactionService } from 'src/transaction/transaction.service';
@@ -21,7 +21,7 @@ export class MeController {
   constructor(
     private readonly userService: UserService,
     private readonly transactionService: TransactionService,
-    private readonly prisma: PrismaService,
+    private readonly prisma: PrismaService
   ) {}
 
   @Get()
@@ -36,10 +36,7 @@ export class MeController {
 
   @Post('avatar')
   @UseInterceptors(FileInterceptor('avatar'))
-  async updateAvatar(
-    @Req() req: Request,
-    @UploadedFile() file: Express.Multer.File,
-  ) {
+  async updateAvatar(@Req() req: Request, @UploadedFile() file: Express.Multer.File) {
     const { id } = req.user;
     // 取得舊頭像位子，刪除舊頭像
     await this.userService.removeOldAvatar(id);

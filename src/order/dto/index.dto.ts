@@ -7,7 +7,7 @@ import {
   IsString,
   Max,
   Min,
-  ValidateNested,
+  ValidateNested
 } from 'class-validator';
 
 export class Data {

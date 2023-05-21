@@ -15,7 +15,7 @@ export class OrderController {
     const { id } = req.user;
     const createOrderData = {
       id,
-      ...createOrderDto,
+      ...createOrderDto
     };
     return this.orderService.create(createOrderData);
   }
@@ -29,9 +29,9 @@ export class OrderController {
     const include = {
       user: {
         select: {
-          name: true,
-        },
-      },
+          name: true
+        }
+      }
     };
 
     return this.orderService.findAll({ skip, take, include });

@@ -15,10 +15,10 @@ async function bootstrap() {
       'Content-Length',
       'Authorization',
       'Accept',
-      'X-Requested-With',
+      'X-Requested-With'
     ],
     methods: ['PUT', 'POST', 'GET', 'PATCH', 'DELETE', 'OPTIONS'],
-    credentials: true,
+    credentials: true
   });
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix('api');
@@ -32,8 +32,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-doc', app, document);
 
-  await app.listen(PORT, () =>
-    console.log(`server is listen on http://localhost:${PORT}`),
-  );
+  await app.listen(PORT, () => console.log(`server is listen on http://localhost:${PORT}`));
 }
 bootstrap();
