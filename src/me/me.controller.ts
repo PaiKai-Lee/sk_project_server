@@ -38,13 +38,13 @@ export class MeController {
   @UseInterceptors(FileInterceptor('avatar'))
   async updateAvatar(@Req() req: Request, @UploadedFile() file: Express.Multer.File) {
     const { id } = req.user;
+    // 取得舊頭像位子，刪除舊頭像
+    await this.userService.removeOldAvatar(id);
     // get avatar path
     const pathArr = file.path.split('\\');
     const avatarPath = '/' + pathArr.slice(1).join('/');
     //insert db
     await this.userService.updateAvatar(id, avatarPath);
-    // 取得舊頭像位子，刪除舊頭像
-    await this.userService.removeOldAvatar(id);
     return 'success';
   }
 

@@ -193,8 +193,9 @@ export class UserService {
       try {
         const rootPath = process.cwd();
         await fs.unlink(rootPath + '/public/' + oldAvatarPath);
+        console.log('remove avatar successfully path: ' + oldAvatarPath)
       } catch (err) {
-        console.log(err);
+        console.error('remove avatar fail path: ' + oldAvatarPath);
       }
     }
   }
