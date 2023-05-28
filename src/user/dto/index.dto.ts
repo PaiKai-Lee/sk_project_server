@@ -6,7 +6,7 @@ import {
   IsNumberString,
   IsAlphanumeric,
   Length,
-  IsBoolean,
+  IsBoolean
 } from 'class-validator';
 
 export class FindAllDto {
@@ -28,16 +28,6 @@ export class FindAllDto {
 
   @IsOptional()
   @IsBoolean()
-  @Transform(({value}) => Boolean(value))
-  hideDelete?:boolean;
-}
-
-export class ChangePwdDto {
-  @IsNotEmpty()
-  @IsAlphanumeric()
-  @Length(6, 12)
-  password: string;
-
-  @IsNotEmpty()
-  confirmPassword: string;
+  @Transform(({ value }) => Boolean(value))
+  hideDelete?: boolean;
 }

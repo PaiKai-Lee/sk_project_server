@@ -15,13 +15,13 @@ export class OrderService {
       const foundUsersAndPoints = await tx.user.findMany({
         where: {
           id: {
-            in: transferData.map((item) => item.id),
-          },
+            in: transferData.map((item) => item.id)
+          }
         },
         select: {
           id: true,
-          points: true,
-        },
+          points: true
+        }
       });
 
       //調整金額
@@ -37,12 +37,12 @@ export class OrderService {
       const updatePromise = updatedUsers.map((user) =>
         tx.user.update({
           where: {
-            id: user.id,
+            id: user.id
           },
           data: {
-            points: user.points,
-          },
-        }),
+            points: user.points
+          }
+        })
       );
       await Promise.all(updatePromise);
 
@@ -52,7 +52,7 @@ export class OrderService {
           userId: user.id,
           save: user.save,
           cost: user.cost,
-          remark: user.remark,
+          remark: user.remark
         };
       });
 
@@ -63,27 +63,23 @@ export class OrderService {
         data: {
           createdById: id,
           transaction: {
-            create: createTransactions,
-          },
-        },
+            create: createTransactions
+          }
+        }
       });
     });
     return 'This action adds a new order';
   }
 
-  findAll(params: {
-    skip?: number;
-    take?: number;
-    include?: Prisma.OrderInclude;
-  }) {
+  findAll(params: { skip?: number; take?: number; include?: Prisma.OrderInclude }) {
     const { skip, take, include } = params;
     return this.prisma.order.findMany({
       skip,
       take,
       include,
       orderBy: {
-        createdAt: 'desc',
-      },
+        createdAt: 'desc'
+      }
     });
   }
 
@@ -94,8 +90,8 @@ export class OrderService {
         createdAt: true,
         user: {
           select: {
-            name: true,
-          },
+            name: true
+          }
         },
         transaction: {
           select: {
@@ -105,15 +101,15 @@ export class OrderService {
             remark: true,
             user: {
               select: {
-                name: true,
-              },
-            },
-          },
-        },
+                name: true
+              }
+            }
+          }
+        }
       },
       where: {
-        id,
-      },
+        id
+      }
     });
   }
 }

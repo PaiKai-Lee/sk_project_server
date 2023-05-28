@@ -10,7 +10,7 @@ import {
   ConflictException,
   ForbiddenException,
   UseGuards,
-  ParseIntPipe,
+  ParseIntPipe
 } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { CreateUserDto, UpdateUserDto } from './dto/index.dto';
@@ -38,7 +38,7 @@ export class UserController {
     const createUser = {
       ...createUserDto,
       createdBy: req.user?.name || 'system',
-      updatedBy: req.user?.name || 'system',
+      updatedBy: req.user?.name || 'system'
     };
     return this.userService.create(createUser);
   }
@@ -48,7 +48,7 @@ export class UserController {
   async update(
     @Req() req: Request,
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body() updateUserDto: UpdateUserDto
   ) {
     // SuperAdmin 不能被此API更新
     if (id === 1) throw new ForbiddenException();
@@ -63,9 +63,9 @@ export class UserController {
     const updateUser = {
       ...updateUserDto,
       id,
-      updatedBy: req.user.name,
+      updatedBy: req.user.name
     };
-    
+
     return this.userService.update(updateUser);
   }
 

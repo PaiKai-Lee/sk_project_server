@@ -45,6 +45,7 @@ model User {
   isDelete    Boolean       @default(false)
   pwdChanged  Int           @default(0)
   points      Int           @default(0)
+  avatar      String        @default("")
   order       Order[]
   transaction Transaction[]
 }

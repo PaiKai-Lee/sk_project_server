@@ -5,6 +5,6 @@ import { PrismaService } from 'src/lib/services/prisma.service';
 
 @Module({
   controllers: [TransactionController],
-  providers: [TransactionService,PrismaService]
+  providers: [TransactionService, PrismaService]
 })
 export class TransactionModule {}

@@ -4,22 +4,16 @@ import { User, Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { CreateUser, UpdateUser } from './interface';
+import * as fs from 'fs/promises';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService
   ) {}
 
-  async create({
-    name,
-    email,
-    role,
-    department,
-    createdBy,
-    updatedBy,
-  }: CreateUser) {
+  async create({ name, email, role, department, createdBy, updatedBy }: CreateUser) {
     const defaultPws = this.configService.get('DEFAULT_PWD');
     const saltRound = this.configService.get('SALT_ROUND');
     // hash password
@@ -34,8 +28,8 @@ export class UserService {
         role,
         department,
         createdBy,
-        updatedBy,
-      },
+        updatedBy
+      }
     });
 
     return {
@@ -43,7 +37,7 @@ export class UserService {
       name: result.name,
       role: result.role,
       email: result.email,
-      department: result.department,
+      department: result.department
     };
   }
 
@@ -52,7 +46,7 @@ export class UserService {
     take?: number;
     select?: Prisma.UserSelect;
     orderBy?: Prisma.UserOrderByWithRelationInput;
-    where?:Prisma.UserWhereInput
+    where?: Prisma.UserWhereInput;
   }) {
     const { skip, take, orderBy, select, where } = params;
     return this.prisma.user.findMany({
@@ -66,9 +60,18 @@ export class UserService {
 
   async findOne(id: number) {
     return this.prisma.user.findUnique({
-      where: {
-        id,
+      select: {
+        id: true,
+        name: true,
+        role: true,
+        email: true,
+        department: true,
+        points: true,
+        avatar: true
       },
+      where: {
+        id
+      }
     });
   }
 
@@ -80,11 +83,11 @@ export class UserService {
         role,
         isDelete,
         department,
-        updatedBy,
+        updatedBy
       },
       where: {
-        id,
-      },
+        id
+      }
     });
 
     return {
@@ -92,14 +95,14 @@ export class UserService {
       name: updatedData.name,
       email: updatedData.email,
       role: updatedData.role,
-      department: updatedData.department,
+      department: updatedData.department
     };
   }
 
   async changePassword({
     id,
     password,
-    updatedBy,
+    updatedBy
   }: {
     id: number;
     password: string;
@@ -113,11 +116,11 @@ export class UserService {
       data: {
         password: hashPassword,
         pwdChanged: { increment: 1 },
-        updatedBy,
+        updatedBy
       },
       where: {
-        id,
-      },
+        id
+      }
     });
   }
 
@@ -131,11 +134,11 @@ export class UserService {
       data: {
         password: hashPassword,
         pwdChanged: 0,
-        updatedBy,
+        updatedBy
       },
       where: {
-        id,
-      },
+        id
+      }
     });
   }
 
@@ -143,11 +146,11 @@ export class UserService {
     const deleteUser = await this.prisma.user.update({
       data: {
         isDelete: true,
-        updatedBy,
+        updatedBy
       },
       where: {
-        id,
-      },
+        id
+      }
     });
     const { name } = deleteUser;
 
@@ -159,9 +162,41 @@ export class UserService {
   async isUserExists(email: string): Promise<boolean> {
     const foundUser: User = await this.prisma.user.findUnique({
       where: {
-        email,
-      },
+        email
+      }
     });
     return foundUser ? true : false;
+  }
+
+  async updateAvatar(id: number, avatarPath: string) {
+    return this.prisma.user.update({
+      data: {
+        avatar: avatarPath
+      },
+      where: {
+        id
+      }
+    });
+  }
+
+  async removeOldAvatar(id: number): Promise<void> {
+    const data = await this.prisma.user.findUnique({
+      select: {
+        avatar: true
+      },
+      where: {
+        id
+      }
+    });
+    const { avatar: oldAvatarPath } = data;
+    if (oldAvatarPath) {
+      try {
+        const rootPath = process.cwd();
+        await fs.unlink(rootPath + '/public/' + oldAvatarPath);
+        console.log('remove avatar successfully path: ' + oldAvatarPath)
+      } catch (err) {
+        console.error('remove avatar fail path: ' + oldAvatarPath);
+      }
+    }
   }
 }
