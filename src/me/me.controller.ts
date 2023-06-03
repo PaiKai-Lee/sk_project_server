@@ -15,6 +15,7 @@ import { Request } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
 import { ChangePwdDto } from './dto/index.dto';
+import * as path from 'path';
 
 @Controller('me')
 export class MeController {
@@ -41,7 +42,7 @@ export class MeController {
     // 取得舊頭像位子，刪除舊頭像
     await this.userService.removeOldAvatar(id);
     // get avatar path
-    const pathArr = file.path.split('\\');
+    const pathArr = file.path.split(path.sep);
     const avatarPath = '/' + pathArr.slice(1).join('/');
     //insert db
     await this.userService.updateAvatar(id, avatarPath);
