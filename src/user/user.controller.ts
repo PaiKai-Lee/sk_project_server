@@ -75,4 +75,17 @@ export class UserController {
 
     return this.userService.findAll({ orderBy, select });
   }
+
+  @Get('partners')
+  getPartners() {
+    const params = {
+      select: {
+        id: true,
+        name: true,
+        department: true,
+        avatar: true
+      }
+    };
+    return this.userService.findAll(params);
+  }
 }

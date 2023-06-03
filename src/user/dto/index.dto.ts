@@ -1,13 +1,5 @@
 import { Transform } from 'class-transformer';
-import {
-  IsNotEmpty,
-  IsString,
-  IsOptional,
-  IsNumberString,
-  IsAlphanumeric,
-  Length,
-  IsBoolean
-} from 'class-validator';
+import { IsString, IsOptional, IsNumberString, IsBoolean } from 'class-validator';
 
 export class FindAllDto {
   @IsOptional()

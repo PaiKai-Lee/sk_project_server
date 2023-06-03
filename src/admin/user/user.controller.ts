@@ -1,6 +1,5 @@
 import {
   Controller,
-  Get,
   Post,
   Patch,
   Delete,
@@ -10,7 +9,8 @@ import {
   ConflictException,
   ForbiddenException,
   UseGuards,
-  ParseIntPipe
+  ParseIntPipe,
+  NotFoundException
 } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { CreateUserDto, UpdateUserDto } from './dto/index.dto';
@@ -21,12 +21,6 @@ import { RoleGuard } from 'src/lib/guards/role.guard';
 @UseGuards(RoleGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
-
-  @Get()
-  test() {
-    return 'test admin/user';
-  }
-
   // 創建使用者
   @Post()
   async create(@Req() req: Request, @Body() createUserDto: CreateUserDto) {
@@ -50,14 +44,24 @@ export class UserController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto
   ) {
+    const { user: authUser } = req;
+    const foundUser = await this.userService.findOne(id);
+    if (!foundUser) throw new NotFoundException('沒有該使用者');
     // SuperAdmin 不能被此API更新
-    if (id === 1) throw new ForbiddenException();
+    if (foundUser.role === 'SuperAdmin') throw new ForbiddenException('SuperAdmin 不能更新');
 
-    const { email } = updateUserDto;
-
+    const { email, isDelete } = updateUserDto;
+    // email不能重複
     if (email) {
       const isExists = await this.userService.isUserExists(email);
       if (isExists) throw new ConflictException();
+    }
+
+    if (isDelete) {
+      if (id === authUser.id) throw new ForbiddenException('不能把自己設為停用');
+      // 除了SuperAdmin 不能修改管理者帳號狀態
+      if (foundUser.role !== 'User' && authUser.role !== 'SuperAdmin')
+        throw new ForbiddenException('不能修改管理者帳號狀態');
     }
 
     const updateUser = {
@@ -71,16 +75,18 @@ export class UserController {
 
   @Post(':id/password')
   resetPassword(@Req() req: Request, @Param('id', ParseIntPipe) id: number) {
+    const { user: authUser } = req;
     // SuperAdmin 不能被重製密碼
-    if (id === 1) throw new ForbiddenException();
+    if (authUser.role === 'SuperAdmin') throw new ForbiddenException('SuperAdmin 不能被重製密碼');
     return this.userService.resetPassword({ id, updatedBy: req.user.name });
   }
 
   // 刪除使用者
   @Delete(':id')
   remove(@Req() req: Request, @Param('id', ParseIntPipe) id: number) {
+    const { user: authUser } = req;
     // SuperAdmin 不能刪
-    if (id === 1) throw new ForbiddenException();
+    if (authUser.role === 'SuperAdmin') throw new ForbiddenException('SuperAdmin 不能刪除');
     return this.userService.remove({ id, updatedBy: req.user.name });
   }
 }

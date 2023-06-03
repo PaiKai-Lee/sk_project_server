@@ -17,10 +17,8 @@ export class AuthGuard implements CanActivate {
 
     const { path, method } = request;
 
-    // 設定不需要使用auth guard的路由
-    if (path === '/api/' || path === '/api/login') return true;
-    if (method === 'GET' && path === '/api/transaction') return true;
-    if (method === 'GET' && path === '/api/user/points') return true;
+    // 不需要使用auth guard的路由
+    if (this.isPathNotRequiredVerification({ path, method })) return true;
 
     const token = this.extractTokenFromHeader(request);
     if (!token) {
@@ -54,5 +52,15 @@ export class AuthGuard implements CanActivate {
   private extractTokenFromHeader(request: Request): string | undefined {
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     return type === 'Bearer' ? token : undefined;
+  }
+
+  private isPathNotRequiredVerification({ path, method }) {
+    const allowPaths = [
+      { method: 'POST', path: '/api/login' },
+      { method: 'GET', path: '/api/transaction' },
+      { method: 'GET', path: '/api/user/points' },
+      { method: 'GET', path: '/api/user/partners' }
+    ];
+    return allowPaths.some((allowPath) => allowPath.method === method && allowPath.path === path);
   }
 }

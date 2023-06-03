@@ -4,7 +4,7 @@ interface User {
   id: number;
   name: string;
   email: string;
-  role: string;
+  role: 'User' | 'Admin' | 'SuperAdmin';
   department: string;
   points: number;
   pwdChanged: number;
