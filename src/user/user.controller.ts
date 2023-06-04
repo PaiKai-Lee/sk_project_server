@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Query, ParseIntPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { FindAllDto } from './dto/index.dto';
-import { Prisma } from '@prisma/client';
+import { Prisma, UserRole } from '@prisma/client';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('使用者')
@@ -84,6 +84,11 @@ export class UserController {
         name: true,
         department: true,
         avatar: true
+      },
+      where: {
+        role: {
+          not: UserRole.SuperAdmin
+        }
       }
     };
     return this.userService.findAll(params);
